@@ -1,3 +1,4 @@
+
 create or replace function demo(inout description text,
                                 inout doc jsonb,
                                 inout selection jsonb,
@@ -11,11 +12,11 @@ as
 $$
 select
     description,
-doc,
-selection,
-expected_result,
-r.result,
-coalesce(r.result = expected_result, ((r.result is null) = (expected_result is null)))
+    doc,
+    selection,
+    expected_result,
+    r.result,
+    coalesce(r.result = expected_result, ((r.result is null) = (expected_result is null)))
 from jsonb_select_keys(doc, selection) r(result)
 $$;
 
@@ -40,7 +41,7 @@ union all
 select
     (
         demo('', '{"a": {"b": "blabla", "c": "bla"}}',
-             '{"a": {"d": 1}}', '{"a": {}}') -- INTERESTING. Empty objects returned.
+             '{"a": {"d": 1}}', '{"a": {}}')
         ).*
 union all
 select
@@ -48,8 +49,6 @@ select
         demo('Mongo: {"a": {}}', '{"a": {"b": "blabla", "c": "bla"}}',
              '{"a": {"b": {"D": 1}}}', '{"a": {"b": "blabla"}}')
         ).*
-
--- INTERESTING: An object in the projection does NOT match a scalar in the doc
 
 -- test_stuff('{"a": {"b": "blabla", "c": "bla"}}, 1); // ERROR "MongoServerError: Expected field projectionto be of type object"
 -- // test_stuff('{"a": {"b": "blabla", "c": "bla"}}, null); // {"_id": {"$oid": "618d959b416c1a278f47f3eb"}, "a": {"b": "blabla", "c": "bla"}} -- just uninteresting - the selection document is ignored sort of'
@@ -141,7 +140,8 @@ select
 union all
 select
     (
-        demo('Mongo: {"ls": [[], [], [], {}, {}]}', '{"ls": [["a", "b"], ["c"], [], {"a": "bla", "d": "bluh"}, {"e": "bleh"}]}',
+        demo('Mongo: {"ls": [[], [], [], {}, {}]}',
+             '{"ls": [["a", "b"], ["c"], [], {"a": "bla", "d": "bluh"}, {"e": "bleh"}]}',
              '{"ls": {}}', '{"ls": [["a", "b"], ["c"], [], {}, {}]}') -- TODO - double check Mongo
         ).*
 union all
@@ -153,19 +153,23 @@ select
 union all
 select
     (
-        demo('Mongo: {"ls": [[], [], [], {"a": "bla", "d": "bluh"}, {}]}', '{"ls": [["a", "b"], ["c"], [], {"a": "bla", "d": "bluh"}, {"e": "bleh"}]}',
+        demo('Mongo: {"ls": [[], [], [], {"a": "bla", "d": "bluh"}, {}]}',
+             '{"ls": [["a", "b"], ["c"], [], {"a": "bla", "d": "bluh"}, {"e": "bleh"}]}',
              '{"ls": {"a": 1, "d": 1}}', '{"ls": [["a", "b"], ["c"], [], {"a": "bla", "d": "bluh"}, {}]}')
         ).*
 union all
 select
     (
-        demo('Mongo: {"ls": [[], [], [], {"a": "bla", "d": "bluh"}, {"e": "bleh"}]}', '{"ls": [["a", "b"], ["c"], [], {"a": "bla", "d": "bluh"}, {"e": "bleh"}]}',
-             '{"ls": {"a": 1, "d": 1, "e": 1}}', '{"ls": [["a", "b"], ["c"], [], {"a": "bla", "d": "bluh"}, {"e": "bleh"}]}')
+        demo('Mongo: {"ls": [[], [], [], {"a": "bla", "d": "bluh"}, {"e": "bleh"}]}',
+             '{"ls": [["a", "b"], ["c"], [], {"a": "bla", "d": "bluh"}, {"e": "bleh"}]}',
+             '{"ls": {"a": 1, "d": 1, "e": 1}}',
+             '{"ls": [["a", "b"], ["c"], [], {"a": "bla", "d": "bluh"}, {"e": "bleh"}]}')
         ).*
 union all
 select
     (
-        demo('Mongo: {"ls": [[], [], [], {"a": "bla"}, {"e": "bleh"}]}', '{"ls": [["a", "b"], ["c"], [], {"a": "bla", "d": "bluh"}, {"e": "bleh"}]}',
+        demo('Mongo: {"ls": [[], [], [], {"a": "bla"}, {"e": "bleh"}]}',
+             '{"ls": [["a", "b"], ["c"], [], {"a": "bla", "d": "bluh"}, {"e": "bleh"}]}',
              '{"ls": {"a": 1, "e": 1}}', '{"ls": [["a", "b"], ["c"], [], {"a": "bla"}, {"e": "bleh"}]}')
         ).*;
 
