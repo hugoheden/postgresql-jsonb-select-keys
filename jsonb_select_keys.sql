@@ -19,11 +19,11 @@ select
                                        doc_property.key,
                                        case
                                            when
-                                               jsonb_typeof(projection_property.value) = 'object'
+                                               projection_property.value = '1'
                                                then
-                                               jsonb_select_keys(doc_property.value, projection_property.value)
-                                           else
                                                doc_property.value
+                                           else
+                                               jsonb_select_keys(doc_property.value, projection_property.value)
                                        end
                                    ), '{}')
                   from jsonb_each(doc) doc_property(key, value)
