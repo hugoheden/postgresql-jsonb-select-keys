@@ -20,6 +20,28 @@ select
 from jsonb_select_keys(doc, selection) r(result)
 $$;
 
+
+select
+    (demo('{"a": "blabla", "b": {"c": "bleh", "d":  "bluh"}}',
+          '{"a": 1}',
+          '{"a": "blabla"}',
+          '')
+        ).*
+union all
+select
+    (demo('{"a": "blabla", "b": {"c": "bleh", "d":  "bluh"}}',
+          '{"b": 1}',
+          '{"b": {"c": "bleh", "d":  "bluh"}}',
+          '')
+        ).*
+union all
+select
+    (demo('{"a": "blabla", "b": {"c": "bleh", "d":  "bluh"}}',
+          '{"b": {"c":  1}}',
+          '{"b": {"c": "bleh"}}',
+          '')
+        ).*
+union all
 select
     (demo('{"a": {"b": "blabla", "c": "bla"}}',
           '{}',
