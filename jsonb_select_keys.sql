@@ -19,19 +19,19 @@ select
                                        doc_property.key,
                                        case
                                            when
-                                               projection_property.value = '1'
+                                               selection_property.value = '1'
                                                then
                                                doc_property.value
                                            else
-                                               jsonb_select_keys(doc_property.value, projection_property.value)
+                                               jsonb_select_keys(doc_property.value, selection_property.value)
                                        end
                                    ), '{}')
                   from jsonb_each(doc) doc_property(key, value)
-                  inner join jsonb_each(selection) projection_property(key, value)
-                             on doc_property.key = projection_property.key
+                  inner join jsonb_each(selection) selection_property(key, value)
+                             on doc_property.key = selection_property.key
         )
-        -- doc is a scalar. In this case, we don't care about the projection and just return the scalar
-        -- TODO consider MongoDB...: If the projection is an _object_ here, then our scalar would not be selected.
+        -- doc is a scalar. In this case, we don't care about the selection and just return the scalar (even if the selection is an object!)
+        -- TODO consider difference from MongoDB...: If the selection is an _object_ here, then our scalar would _not_ be selected in MongoDB.
         else doc
     end;
 $$
