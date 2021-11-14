@@ -1,8 +1,6 @@
 # jsonb_select_keys - a PostgreSQL function
 
-A postgresql function for selecting a subset of jsonb fields 
-
-"Deep selection" of json documents (well jsonb) in postgres. (Is "projection" a better term?)
+A postgresql function for selecting a subset of jsonb fields. "Deep selection" of json documents (well jsonb). (Is "projection" a better term?)
 
 Tested with postgres 12
 
