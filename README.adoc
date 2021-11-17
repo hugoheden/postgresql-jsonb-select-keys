@@ -1,6 +1,6 @@
-# jsonb_select_keys - a PostgreSQL function
+= jsonb_select_keys - a PostgreSQL function
 
-A postgresql function for "deep-selecting" a subset a json document (well jsonb). (Is "projection" a better term?)
+A postgresql function for "deep-selecting" a subset a json document (well jsonb).(Is "projection" a better term?)
 
 Tested with postgres 12
 
@@ -8,7 +8,8 @@ Warning: Never used or tested in production!
 
 Usage example:
 
-```
+[source,sql]
+----
 select
     jsonb_select_keys(
             '{"a": "x", "b": {"c": "y", "d": "z"}}', -- document
@@ -17,7 +18,23 @@ select
 
         );
 -- result: {"b": {"c": "y"}}
-```
+----
+
+
+[cols="a,a"]
+|===
+|
+[source,json]
+----
+{"a": "x", "b": {"c": "y", "d": "z"}}
+|Cell in column 2, row 1
+
+|Cell in column 1, row 2
+|Cell in column 2, row 2
+
+|Cell in column 1, row 3
+|Cell in column 2, row 3
+|===
 
 TODO - describe some stuff:
 
@@ -26,7 +43,7 @@ TODO - describe some stuff:
 * The selection object can only contain values that are objects or the scalar number "1". The same rule applies
   recursively to the sub-objects
 * There is no way to say "just select the whole document".
-  * We could add that. We could allow the caller to just pass the number "1" as a selection, and let that mean "select
+* We could add that. We could allow the caller to just pass the number "1" as a selection, and let that mean "select
     the whole document"
 * This whole concept is similar to (but simpler variant of) what MongoDB calls a projection
 * Use case: save network traffic (and application CPU?) by only pulling subsets of json that are actually needed by the
@@ -35,7 +52,7 @@ TODO - describe some stuff:
 * The cost is significant CPU usage (queries get slower) on the database server
 * It is somewhat quirky that the resulting document can contain lots of empty objects or lists. MongoDB behaves
   similarly.
-  * We could fix that and make sure to filter out empty objects and lists (but I am not sure this could be done without
+* We could fix that and make sure to filter out empty objects and lists (but I am not sure this could be done without
     a performance penalty)
 * In MongoDB "sub-projection" (a sub-object of the selection) must not be empty, i.e no '{}'. If such an object is
   found, an error is emitted. We do it differently (to make the function simpler and maybe faster) - an empty object in
@@ -45,5 +62,5 @@ TODO - describe some stuff:
   it is easier)
 * The root level of the document in mongo is always an object (I think). But we we want to support root level lists too
 * Somewhat related:
-  * https://dba.stackexchange.com/questions/290005/how-to-select-sub-object-with-given-keys-from-jsonb
-  * https://dba.stackexchange.com/questions/265731/how-to-select-subset-json-with-postgresql
+* https://dba.stackexchange.com/questions/290005/how-to-select-sub-object-with-given-keys-from-jsonb
+* https://dba.stackexchange.com/questions/265731/how-to-select-subset-json-with-postgresql
