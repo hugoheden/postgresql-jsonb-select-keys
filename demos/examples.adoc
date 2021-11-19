@@ -1,6 +1,9 @@
 ////
 Generated file, manual edits will be overwritten
 ////
+
+Consider the following example json doc:
+
 [%header,cols="a"]
 |===
 |Example doc
@@ -56,7 +59,9 @@ Generated file, manual edits will be overwritten
 
 |===
 
-Given the above doc, consider the following example selections and results:[%header,cols="a,a"]
+Given the above example doc and the below selections, jsonb_select_keys yields the following results:
+
+[%header,cols="a,a"]
 |===
 |Selection|Result
 

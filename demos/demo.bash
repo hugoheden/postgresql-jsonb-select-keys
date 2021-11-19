@@ -36,6 +36,8 @@ function print_ascii_doc_cell_json() {
 
 (
   printf '////\nGenerated file, manual edits will be overwritten\n////\n'
+
+  printf '\nConsider the following example json doc:\n\n'
   printf '[%%header,cols="a"]\n|===\n'
   printf '|Example doc\n\n'
   # Gaahh, what a mess. We add a column containing a '#' character here. This is used as a line delimiter below in read
@@ -48,7 +50,9 @@ function print_ascii_doc_cell_json() {
     done
   printf '\n|===\n'
 
-  printf '\nGiven the above doc, consider the following example selections and results:'
+
+
+  printf '\nGiven the above example doc and the below selections, jsonb_select_keys yields the following results:\n\n'
   printf '[%%header,cols="a,a"]\n|===\n'
   printf '|Selection|Result\n\n'
   # Gaahh, what a mess. We add a column containing a '#' character here. This is used as a line delimiter below in read
