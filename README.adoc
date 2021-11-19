@@ -7,6 +7,13 @@ Tested with postgres 12
 
 Warning: Never used or tested in production!
 
+The code:
+
+[source,sql]
+----
+include::jsonb_select_keys.sql[]
+----
+
 Usage example:
 
 [source,sql]
