@@ -15,6 +15,18 @@ function my_psql() {
 
 my_psql --file demo.sql;
 
+if [ "xx" != "x$(my_psql --command 'select * from example_doc_result e where not e.correct')x" ]; then
+  echo "test failed, please check table example_doc_result" 1>&2
+  exit 1
+fi
+
+if [ "xx" != "x$(my_psql --command 'select * from examples_many_small e where not e.correct')x" ]; then
+  echo "test failed, please check table examples_many_small" 1>&2
+  exit 1
+fi
+
+echo "tests ok"
+
 function print_ascii_doc_cell() {
   echo "| $1 "
 }
@@ -66,3 +78,5 @@ function print_ascii_doc_cell_json() {
     done
   printf '\n|===\n'
 ) >examples_many_small.adoc
+
+echo "files generated ok"
