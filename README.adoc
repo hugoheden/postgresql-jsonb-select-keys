@@ -9,10 +9,17 @@ Warning: Never used or tested in production!
 
 The code:
 
+ifndef::env-github[]
 [source,sql]
 ----
 include::jsonb_select_keys.sql[]
 ----
+endif::[]
+
+ifdef::env-github[]
+link:jsonb_select_keys.sql[]
+endif::[]
+
 
 Usage example:
 
