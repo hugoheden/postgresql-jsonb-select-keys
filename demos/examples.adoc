@@ -2,13 +2,13 @@
 Generated file, manual edits will be overwritten
 ////
 
-Consider the following example json doc:
+Consider this example doc and selections. `jsonb_select_keys()` yields the following results:
 
-[%header,cols="a"]
+[%header,cols="a,a,a"]
 |===
-|Example doc
+|Doc|Selection|Result
 
-|
+.100+|
 [source,json]
 ----
 {
@@ -55,16 +55,6 @@ Consider the following example json doc:
     ]
 }
 ----
-
-
-|===
-
-Given the above example doc and the below selections, jsonb_select_keys yields the following results:
-
-[%header,cols="a,a"]
-|===
-|Selection|Result
-
 |
 [source,json]
 ----

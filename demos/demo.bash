@@ -36,25 +36,12 @@ function print_ascii_doc_cell_json() {
 
 (
   printf '////\nGenerated file, manual edits will be overwritten\n////\n'
-
-  printf '\nConsider the following example json doc:\n\n'
-  printf '[%%header,cols="a"]\n|===\n'
-  printf '|Example doc\n\n'
-  # Gaahh, what a mess. We add a column containing a '#' character here. This is used as a line delimiter below in read
-  # -d '#' instead of newline. (The jsonb_pretty outputs newlines, so we need to use another character as line
-  # delimiter)
-  my_psql --command "select jsonb_pretty(ed.x), '#' from example_doc ed" |
-    while IFS='|' read -r -d '#' doc; do
-      print_ascii_doc_cell_json "$doc"
-      echo
-    done
-  printf '\n|===\n'
-
-
-
-  printf '\nGiven the above example doc and the below selections, jsonb_select_keys yields the following results:\n\n'
-  printf '[%%header,cols="a,a"]\n|===\n'
-  printf '|Selection|Result\n\n'
+  doc="$(my_psql --command 'select jsonb_pretty(ed.x) from example_doc ed')"
+  # shellcheck disable=SC2016
+  printf '\nConsider this example doc and selections. `jsonb_select_keys()` yields the following results:\n\n'
+  printf '[%%header,cols="a,a,a"]\n|===\n'
+  printf '|Doc|Selection|Result\n\n'
+  printf '.100+' ; print_ascii_doc_cell_json "$doc";
   # Gaahh, what a mess. We add a column containing a '#' character here. This is used as a line delimiter below in read
   # -d '#' instead of newline. (The jsonb_pretty outputs newlines, so we need to use another character as line
   # delimiter)
