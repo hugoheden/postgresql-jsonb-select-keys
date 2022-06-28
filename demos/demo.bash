@@ -2,8 +2,8 @@
 
 set -e
 
-function my_psql() {
-  psql postgresql://postgres:secret@localhost/json_test \
+my_psql() {
+  docker-compose exec -T postgres psql postgresql://postgres:secret@localhost/json_test \
       --no-psqlrc            \
       --tuples-only            \
       --set ON_ERROR_STOP=on \
@@ -13,7 +13,9 @@ function my_psql() {
       "$1" "$2"
 }
 
-my_psql --file demo.sql;
+my_psql --file json_test/jsonb_select_keys.sql
+
+my_psql --file json_test/demos/demo.sql;
 
 if [ "xx" != "x$(my_psql --command 'select * from example_doc_result e where not e.correct')x" ]; then
   echo "test failed, please check table example_doc_result" 1>&2

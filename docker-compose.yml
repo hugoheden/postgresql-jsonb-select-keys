@@ -1,0 +1,12 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:12
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=json_test
+    ports:
+      - "15432:5432"
+    volumes:
+      - .:/json_test

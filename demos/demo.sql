@@ -1,4 +1,4 @@
--- create database json_test; -- TODO
+-- create database json_test; -- this is done in docker-compose.yml
 
 drop function if exists demo;
 create or replace function demo(inout doc jsonb,
