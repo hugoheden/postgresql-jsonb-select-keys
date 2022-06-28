@@ -1,5 +1,5 @@
 ////
-Generated file, manual edits will be overwritten
+Generated file (by test.bash), manual edits will be overwritten
 ////
 
 Consider this example doc and selections. `jsonb_select_keys()` yields the following results:

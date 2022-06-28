@@ -37,7 +37,7 @@ select
 
 == A few examples
 
-include::demos/examples.adoc[]
+include::test/examples.adoc[]
 
 == Some notes
 
@@ -68,4 +68,4 @@ But we we want to support root level lists too
 
 == A bunch of small examples
 
-include::demos/examples_many_small.adoc[]
+include::test/examples_many_small.adoc[]

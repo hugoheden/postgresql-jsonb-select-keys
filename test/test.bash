@@ -16,7 +16,7 @@ my_psql() {
 
 my_psql --file json_test/jsonb_select_keys.sql
 
-my_psql --file json_test/demos/demo.sql;
+my_psql --file json_test/test/test.sql;
 
 ERRORS_TEST_RESULTS_EXAMPLE_DOC=$(my_psql --command 'select * from test_results_example_doc e where not e.correct')
 if [ "xx" != "x${ERRORS_TEST_RESULTS_EXAMPLE_DOC}x" ]; then
@@ -40,7 +40,7 @@ function print_ascii_doc_cell_json() {
 }
 
 (
-  printf '////\nGenerated file, manual edits will be overwritten\n////\n'
+  printf '////\nGenerated file (by test.bash), manual edits will be overwritten\n////\n'
   doc="$(my_psql --command 'select jsonb_pretty(ed.x) from example_doc ed')"
   # shellcheck disable=SC2016
   printf '\nConsider this example doc and selections. `jsonb_select_keys()` yields the following results:\n\n'
@@ -59,7 +59,7 @@ function print_ascii_doc_cell_json() {
 ) >examples.adoc
 
 (
-  printf '////\nGenerated file, manual edits will be overwritten\n////\n'
+  printf '////\nGenerated file (by test.bash), manual edits will be overwritten\n////\n'
   printf '[%%header,cols="a,a,a"]\n|===\n'
   printf '|Doc|Selection|Result\n\n'
   # Gaahh, what a mess. We add a column containing a '#' character here. This is used as a line delimiter below in read
