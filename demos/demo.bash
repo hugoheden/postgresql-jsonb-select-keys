@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+set -o pipefail
 
 my_psql() {
   docker-compose exec -T postgres psql postgresql://postgres:secret@localhost/json_test \
@@ -17,13 +18,15 @@ my_psql --file json_test/jsonb_select_keys.sql
 
 my_psql --file json_test/demos/demo.sql;
 
-if [ "xx" != "x$(my_psql --command 'select * from example_doc_result e where not e.correct')x" ]; then
-  echo "test failed, please check table example_doc_result" 1>&2
+ERRORS_TEST_RESULTS_EXAMPLE_DOC=$(my_psql --command 'select * from test_results_example_doc e where not e.correct')
+if [ "xx" != "x${ERRORS_TEST_RESULTS_EXAMPLE_DOC}x" ]; then
+  echo "test failed, please check table test_results_example_doc" 1>&2
   exit 1
 fi
 
-if [ "xx" != "x$(my_psql --command 'select * from examples_many_small e where not e.correct')x" ]; then
-  echo "test failed, please check table examples_many_small" 1>&2
+ERRORS_TEST_RESULTS_MANY_SMALL=$(my_psql --command 'select * from test_results_many_small e where not e.correct')
+if [ "xx" != "x${ERRORS_TEST_RESULTS_MANY_SMALL}x" ]; then
+  echo "test failed, please check table test_results_many_small" 1>&2
   exit 1
 fi
 
@@ -47,7 +50,7 @@ function print_ascii_doc_cell_json() {
   # Gaahh, what a mess. We add a column containing a '#' character here. This is used as a line delimiter below in read
   # -d '#' instead of newline. (The jsonb_pretty outputs newlines, so we need to use another character as line
   # delimiter)
-  my_psql --command "select jsonb_pretty(edr.selection), jsonb_pretty(edr.result), '#' from example_doc_result edr" |
+  my_psql --command "select jsonb_pretty(edr.selection), jsonb_pretty(edr.result), '#' from test_results_example_doc edr" |
     while IFS='|' read -r -d '#' selection result; do
       print_ascii_doc_cell_json "$selection" ; print_ascii_doc_cell_json "$result"
       echo
@@ -62,7 +65,7 @@ function print_ascii_doc_cell_json() {
   # Gaahh, what a mess. We add a column containing a '#' character here. This is used as a line delimiter below in read
   # -d '#' instead of newline. (The jsonb_pretty outputs newlines, so we need to use another character as line
   # delimiter)
-  my_psql --command "select jsonb_pretty(ems.doc), jsonb_pretty(ems.selection), jsonb_pretty(ems.result), '#' from examples_many_small ems" |
+  my_psql --command "select jsonb_pretty(ems.doc), jsonb_pretty(ems.selection), jsonb_pretty(ems.result), '#' from test_results_many_small ems" |
     while IFS='|' read -r -d '#' doc selection result; do
       print_ascii_doc_cell_json "$doc"
       print_ascii_doc_cell_json "$selection"
@@ -72,4 +75,4 @@ function print_ascii_doc_cell_json() {
   printf '\n|===\n'
 ) >examples_many_small.adoc
 
-echo "files generated ok"
+echo "files generated ok (check with git diff, should be no differences)"

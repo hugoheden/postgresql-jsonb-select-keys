@@ -1,12 +1,12 @@
 -- create database json_test; -- this is done in docker-compose.yml
 
-drop function if exists demo;
-create or replace function demo(inout doc jsonb,
-                                inout selection jsonb,
-                                out result jsonb,
-                                inout expected_result jsonb,
-                                out correct boolean,
-                                inout comment text)
+drop function if exists run_test_case;
+create or replace function run_test_case(inout doc jsonb,
+                                         inout selection jsonb,
+                                         out result jsonb,
+                                         inout expected_result jsonb,
+                                         out correct boolean,
+                                         inout comment text)
     language sql
     immutable
     parallel safe
@@ -69,15 +69,15 @@ create table example_doc(x) as (
            }
            '::jsonb);
 
-drop table if exists example_doc_result;
-create table example_doc_result as
+drop table if exists test_results_example_doc;
+create table test_results_example_doc as
 with example_selections(selection, expected_result, comment) as (
     values ('{
       "a": 1
     }'::jsonb, -- selection
             '{
               "a": "ax"
-            }'::jsonb, -- result
+            }'::jsonb, -- expected result
             'Select a property at the root level'),
 
            ('{
@@ -91,7 +91,7 @@ with example_selections(selection, expected_result, comment) as (
               "b_obj": {
                 "bb": "bbx"
               }
-            }'::jsonb, -- result
+            }'::jsonb, -- expected result
             'Select a property at the root level, and one property in a sub-object'),
 
            ('{
@@ -104,7 +104,7 @@ with example_selections(selection, expected_result, comment) as (
                 "dx",
                 "dy"
               ]
-            }'::jsonb, -- result
+            }'::jsonb, -- expected result
             'Select a property and a list at the root level'),
 
            (
@@ -115,7 +115,7 @@ with example_selections(selection, expected_result, comment) as (
                    "ea": 1
                  }
                }'::jsonb,
-               -- result:
+               -- expected result:
                '{
                  "a": "ax",
                  "e_list": [
@@ -142,7 +142,7 @@ with example_selections(selection, expected_result, comment) as (
                    "bb": 1
                  }
                }'::jsonb,
-               -- result:
+               -- expected result:
                '{
                  "b_obj": {
                    "bb": "bbx"
@@ -160,15 +160,15 @@ with example_selections(selection, expected_result, comment) as (
                  }
                }'::jsonb,
                'Select a property and parts of sub-objects within a list within a sub-object, and a property in a sub-object '))
-select (demo(d.x, e.selection, e.expected_result, e.comment)).*
+select (run_test_case(d.x, e.selection, e.expected_result, e.comment)).*
 from example_doc d
          cross join example_selections e;
 
 
 
-drop table if exists examples_many_small;
-create table examples_many_small as
-select (demo(t.doc::jsonb, t.selection::jsonb, t.expected_result::jsonb, t.comment)).*
+drop table if exists test_results_many_small;
+create table test_results_many_small as
+select (run_test_case(t.doc::jsonb, t.selection::jsonb, t.expected_result::jsonb, t.comment)).*
 from (values ('{"a": "blabla", "b": {"c": "bleh", "d":  "bluh"}}',
               '{"a": 1}',
               '{"a": "blabla"}',
