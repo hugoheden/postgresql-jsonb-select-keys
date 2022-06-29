@@ -71,49 +71,58 @@ create table example_doc(x) as (
 drop table if exists test_results_example_doc;
 create table test_results_example_doc as
 with example_selections(selection, expected_result, comment) as (
-    values ('{
-      "a": 1
-    }'::jsonb, -- selection
-            '{
-              "a": "ax"
-            }'::jsonb, -- expected result
-            'Select a property at the root level'),
+    values (
+                -- selection:
+                '{
+                  "a": 1
+                 }'::jsonb,
+                -- expected result:
+                '{
+                  "a": "ax"
+                 }'::jsonb,
+                'Select a property at the root level'),
 
-           ('{
-             "a": 1,
-             "b_obj": {
-               "bb": 1
-             }
-           }'::jsonb, -- selection
-            '{
-              "a": "ax",
-              "b_obj": {
-                "bb": "bbx"
-              }
-            }'::jsonb, -- expected result
-            'Select a property at the root level, and one property in a sub-object'),
+           (
+               -- selection:
+                '{
+                    "a": 1,
+                    "b_obj": {
+                      "bb": 1
+                    }
+                 }'::jsonb,
+                -- expected result:
+                '{
+                    "a": "ax",
+                    "b_obj": {
+                      "bb": "bbx"
+                    }
+                 }'::jsonb,
+                'Select a property at the root level, and one property in a sub-object'),
 
-           ('{
-             "a": 1,
-             "d_list": 1
-           }'::jsonb, -- selection
-            '{
-              "a": "ax",
-              "d_list": [
-                "dx",
-                "dy"
-              ]
-            }'::jsonb, -- expected result
-            'Select a property and a list at the root level'),
+           (
+               -- selection:
+                '{
+                    "a": 1,
+                    "d_list": 1
+                  }'::jsonb,
+               -- expected result:
+                '{
+                    "a": "ax",
+                    "d_list": [
+                      "dx",
+                      "dy"
+                    ]
+                  }'::jsonb,
+                'Select a property and a list at the root level'),
 
            (
                -- selection:
                '{
-                 "a": 1,
-                 "e_list": {
-                   "ea": 1
-                 }
-               }'::jsonb,
+                  "a": 1,
+                  "e_list": {
+                    "ea": 1
+                  }
+                }'::jsonb,
                -- expected result:
                '{
                  "a": "ax",
@@ -158,7 +167,8 @@ with example_selections(selection, expected_result, comment) as (
                    ]
                  }
                }'::jsonb,
-               'Select a property and parts of sub-objects within a list within a sub-object, and a property in a sub-object '))
+               'Select a property and parts of sub-objects within a list within a sub-object, and a property in a sub-object ')
+    )
 select (run_test_case(d.x, e.selection, e.expected_result, e.comment)).*
 from example_doc d
          cross join example_selections e;
@@ -168,14 +178,14 @@ from example_doc d
 drop table if exists test_results_many_small;
 create table test_results_many_small as
 select (run_test_case(t.doc::jsonb, t.selection::jsonb, t.expected_result::jsonb, t.comment)).*
-from (values ('{"a": "blabla", "b": {"c": "bleh", "d":  "bluh"}}',
-              '{"a": 1}',
-              '{"a": "blabla"}',
-              '')
-           , ('{"a": "blabla", "b": {"c": "bleh", "d":  "bluh"}}',
-              '{"b": 1}',
-              '{"b": {"c": "bleh", "d":  "bluh"}}',
-              '')
+from (values ('{"a": "blabla", "b": {"c": "bleh", "d":  "bluh"}}', -- doc
+              '{"a": 1}',                                          -- selection
+              '{"a": "blabla"}',                                   -- expected result
+              '')                                                  -- comment
+           , ('{"a": "blabla", "b": {"c": "bleh", "d":  "bluh"}}', -- doc
+              '{"b": 1}',                                          -- selection
+              '{"b": {"c": "bleh", "d":  "bluh"}}',                -- expected result
+              '')                                                  -- comment
            , ('{"a": "blabla", "b": {"c": "bleh", "d":  "bluh"}}',
               '{"b": {"c":  1}}',
               '{"b": {"c": "bleh"}}',

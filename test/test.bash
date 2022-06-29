@@ -39,6 +39,7 @@ function print_ascii_doc_cell_json() {
   printf "|\n[source,json]\n----\n%s\n----\n" "$1"
 }
 
+# Generate examples.adoc:
 (
   printf '////\nGenerated file (by test.bash), manual edits will be overwritten\n////\n'
   doc="$(my_psql --command 'select jsonb_pretty(ed.x) from example_doc ed')"
@@ -56,8 +57,9 @@ function print_ascii_doc_cell_json() {
       echo
     done
   printf '\n|===\n'
-) >examples.adoc
+) > examples.adoc
 
+# Generate examples_many_small.adoc:
 (
   printf '////\nGenerated file (by test.bash), manual edits will be overwritten\n////\n'
   printf '[%%header,cols="a,a,a"]\n|===\n'
@@ -73,6 +75,6 @@ function print_ascii_doc_cell_json() {
       echo
     done
   printf '\n|===\n'
-) >examples_many_small.adoc
+) > examples_many_small.adoc
 
-echo "files generated ok (check with git diff, should be no differences)"
+echo "files generated ok (check with git status, should be no differences)"
