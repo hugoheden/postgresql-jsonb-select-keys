@@ -1,6 +1,5 @@
 -- create database json_test; -- this is done in docker-compose.yml
 
-drop function if exists run_test_case;
 create or replace function run_test_case(inout doc jsonb,
                                          inout selection jsonb,
                                          out result jsonb,

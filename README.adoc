@@ -3,7 +3,7 @@
 A postgresql function for "deep-selecting" a subset of a json document (well jsonb).
 (Is "projection" a better term?)
 
-Tested with postgres 12
+Tested with postgres 9, 10, 11, 12, 13, 14.
 
 Warning: Never used or tested in production!
 

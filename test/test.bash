@@ -3,7 +3,7 @@
 set -e
 set -o pipefail
 
-my_psql() {
+function my_psql() {
   docker-compose exec -T postgres psql postgresql://postgres:secret@localhost/json_test \
       --no-psqlrc            \
       --tuples-only            \
