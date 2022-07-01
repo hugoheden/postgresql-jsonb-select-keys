@@ -7,6 +7,12 @@ Tested with postgres 9, 10, 11, 12, 13, 14.
 
 Warning: Never used or tested in production!
 
+The function is recursive - it calls itself to handle nested json object structures.
+
+The work horse in the function is the inner join: The properties of the selection json object are joined with the doc json object. The join condition is field name (key) of each property. So the result will contain only the properties in the doc that are also present in the selection.
+
+There is also some cruft to handle lists and scalars in reasonable ways.
+
 Usage example:
 
 [source,sql]
@@ -65,7 +71,7 @@ include::test/examples.adoc[]
 Might be useful when having legacy DB with big legacy json-documents, and there is a slow query that really only needs a small sub-set, a deep sub-selection, of the stored json-documents.
 * The cost is significant CPU usage (queries get slower) on the database server
 * It is somewhat quirky that the resulting document can contain lots of empty objects or lists (MongoDB behaves similarly)
-** We could fix that and make sure to filter out empty objects and lists (but I am not sure this could be done without a performance penalty)
+** We could fix that and make sure to filter out empty objects and lists (but I am not sure if this could be done without a performance penalty)
 * In MongoDB "sub-projection" (a sub-object of the selection) must not be empty, i.e no '{}'.
 If such an object is found, an error is emitted.
 We do it differently (to make the function simpler and maybe faster) - an empty object in the selection means "no fields are of interest".
@@ -82,3 +88,18 @@ But `jsonb_select_keys` supports root level lists too.
 == A bunch of small examples
 
 include::test/examples_many_small.adoc[]
+
+== Maintenance
+
+Start a postgres server using docker-compose and link:docker-compose.yml[].
+
+The bash script link:test/run_tests.bash[] runs the tests (and verifies the results), and auto-generates the asciidoc example files (link:test/examples.adoc[], link:test/examples_many_small.adoc[]) from the test results.
+
+So, a hint on how to work would be:
+
+[source,bash]
+----
+cd test
+docker-compose up -d
+bash run_tests.bash
+----

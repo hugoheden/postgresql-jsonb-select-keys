@@ -16,7 +16,7 @@ function my_psql() {
 
 my_psql --file json_test/jsonb_select_keys.sql
 
-my_psql --file json_test/test/test.sql;
+my_psql --file json_test/test/test_suite.sql;
 
 ERRORS_TEST_RESULTS_EXAMPLE_DOC=$(my_psql --command 'select * from test_results_example_doc e where not e.correct')
 if [ "xx" != "x${ERRORS_TEST_RESULTS_EXAMPLE_DOC}x" ]; then
