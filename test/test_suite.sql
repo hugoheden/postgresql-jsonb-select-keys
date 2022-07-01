@@ -342,5 +342,47 @@ from (values ('{"a": "blabla", "b": {"c": "bleh", "d":  "bluh"}}', -- doc
            , ('[{"a": "x"}, {"a": "y"}, {"b": "z"}]',
               '{"a": {"b": 1}}',
               '[{"a": "x"}, {"a": "y"}, {}]',
-              '')) t("doc", selection, expected_result, comment);
+              '')
+            , (
+                '{
+                    "a": "hello",
+                    "b": {
+                        "c": "there",
+                        "d": "how"
+                    },
+                    "e" : [
+                        {
+                          "f": "are",
+                          "g": "you"
+                        },
+                        {
+                          "f": "this",
+                          "g": "evening"
+                        }
+                    ]
+                }'::jsonb,
+               '{
+                  "b": {
+                      "c": 1
+                  },
+                  "e" : {
+                      "g": 1
+                  }
+               }'::jsonb,
+                '{
+                  "b": {
+                    "c": "there"
+                  },
+                  "e" : [
+                    {
+                      "g": "you"
+                    },
+                    {
+                      "g": "evening"
+                    }
+                  ]
+                }'::jsonb,
+               'to be used in README as initial example'
+        )
+      ) t("doc", selection, expected_result, comment);
 

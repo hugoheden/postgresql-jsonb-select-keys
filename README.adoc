@@ -8,41 +8,72 @@ Tested with postgres 9, 10, 11, 12, 13, 14.
 Warning: Never used or tested in production!
 
 The function is recursive - it calls itself to handle nested json object structures.
-
-The work horse in the function is the inner join: The properties of the selection json object are joined with the doc json object. The join condition is field name (key) of each property. So the result will contain only the properties in the doc that are also present in the selection.
-
-There is also some cruft to handle lists and scalars in reasonable ways.
+It can also handle json documents with lists.
 
 Usage example:
 
 [source,sql]
 ----
 select jsonb_select_keys(
-           -- doc:
-               '{
-                 "a": "x",
-                 "b": {
-                   "c": "y",
-                   "d": "z"
-                 }
-               }',
-           -- selection:
-               '{
-                 "b": {
-                   "c": 1
-                 }
-               }'
-           );
--- result: {"b": {"c": "y"}}
+ -- doc:
+ '{
+    "a": "hello",
+    "b": {
+        "c": "there",
+        "d": "how"
+    },
+    "e": [
+        {
+            "f": "are",
+            "g": "you"
+        },
+        {
+            "f": "this",
+            "g": "evening"
+        }
+    ]
+ }',
+ -- selection:
+ '{
+    "b": {
+        "c": 1
+    },
+    "e": {
+        "g": 1
+    }
+ }'
+);
 ----
 
-Terminology:
+This would result in:
 
-* By "doc" we mean the jsonb document that we want to process. You might have many such documents stored in some DB-column.
+[source,json]
+----
+{
+    "b": {
+        "c": "there"
+    },
+    "e": [
+        {
+            "g": "you"
+        },
+        {
+            "g": "evening"
+        }
+    ]
+}
+----
+
+As shown here, the function handles lists and nested sub-structures.
+
+== Terminology:
+
+* By "doc" we mean the jsonb document that we want to process.
+You might have many such documents stored in some DB-column.
 * By "selection" we mean the json snippet that specifies the fields in the doc that we are interested in.
 
 
-The code:
+== The code
 
 ifndef::env-github[]
 [source,sql]
@@ -54,6 +85,66 @@ endif::[]
 ifdef::env-github[]
 link:jsonb_select_keys.sql[]
 endif::[]
+
+=== Discussion
+
+The work horse in the function is the inner join: The properties of the selection json object ("extracted" using `json_each`) are joined with the doc json object ("extracted" using `json_each`).
+The join condition is field name ("key") of each property.
+So the result will contain only the properties in the doc that are also present in the selection.
+So, a much simplified variant of the function could be something like:
+
+[source,sql]
+----
+create or replace function simple(doc jsonb, selection jsonb)
+    returns jsonb
+    language sql
+    immutable
+    parallel safe
+as
+$$
+with selected_subset
+         as
+         (select doc_property.key, doc_property.value
+          from jsonb_each(doc) doc_property(key, value)
+                   inner join jsonb_each(selection) selection_property(key, value)
+                              on doc_property.key = selection_property.key)
+select jsonb_object_agg(ss.key, ss.value)
+from selected_subset ss;
+$$;
+----
+
+which we could use like this:
+
+[source,sql]
+----
+select simple(
+           -- doc:
+               '{
+                 "a": "hello",
+                 "b": "there",
+                 "c": "how are you",
+                 "d": "today"
+               }'::jsonb,
+           -- selection:
+               '{
+                 "a": 1,
+                 "c": 1,
+                 "e": 1
+               }'::jsonb);
+----
+
+with the result:
+
+[source,json]
+----
+{
+  "a": "hello",
+  "c": "how are you"
+}
+----
+
+However, this simplified version does not handle lists and nested objects et.c., which
+link:jsonb_select_keys.sql[jsonb_select_key] does by adding some cruft.
 
 == A few examples
 
@@ -89,7 +180,7 @@ But `jsonb_select_keys` supports root level lists too.
 
 include::test/examples_many_small.adoc[]
 
-== Maintenance
+== Developing
 
 Start a postgres server using docker-compose and link:docker-compose.yml[].
 

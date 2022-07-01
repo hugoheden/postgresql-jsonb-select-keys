@@ -1,5 +1,5 @@
 
--- The "selection" must be a json 'object' (i.e not a scalar, list, null, SQL-null etc)
+-- The "selection" must be a jsonb 'object' (i.e not a scalar, list, null, SQL-null etc)
 -- TODO - figure out and describe what happens otherwise
 
 create or replace function jsonb_select_keys(doc jsonb, selection jsonb)
