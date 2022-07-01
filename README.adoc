@@ -1,11 +1,40 @@
 = jsonb_select_keys - a PostgreSQL function
 
-A postgresql function for "deep-selecting" a subset of a json document (well jsonb).
+A postgresql function for selecting a subset of a fields in a json (`jsonb`) document.
 (Is "projection" a better term?)
 
 Tested with postgres 9, 10, 11, 12, 13, 14.
 
 Warning: Never used or tested in production!
+
+Usage example:
+
+[source,sql]
+----
+select jsonb_select_keys(
+           -- doc:
+               '{
+                 "a": "x",
+                 "b": {
+                   "c": "y",
+                   "d": "z"
+                 }
+               }',
+           -- selection:
+               '{
+                 "b": {
+                   "c": 1
+                 }
+               }'
+           );
+-- result: {"b": {"c": "y"}}
+----
+
+Terminology:
+
+* By "doc" we mean the jsonb document that we want to process. You might have many such documents stored in some DB-column.
+* By "selection" we mean the json snippet that specifies the fields in the doc that we are interested in.
+
 
 The code:
 
@@ -20,30 +49,13 @@ ifdef::env-github[]
 link:jsonb_select_keys.sql[]
 endif::[]
 
-
-Usage example:
-
-[source,sql]
-----
-select
-    jsonb_select_keys(
-            '{"a": "x", "b": {"c": "y", "d": "z"}}', -- doc
-
-            '{"b": {"c": 1}}' -- selection
-
-        );
--- result: {"b": {"c": "y"}}
-----
-
 == A few examples
 
 include::test/examples.adoc[]
 
 == Some notes
 
-* By "doc" we mean the jsonb document that we want to process.
-* By "selection" we mean the json snippet that specifies the fields in the doc that we are interested in
-* The selection must be a json object (it can't be a scalar or a list)
+* The selection must be a json _object_ (it can't be a scalar or a list)
 * The selection object can only contain values that are objects or the scalar number "1".
 (The same rule applies recursively to the sub-objects in the selection)
 * There is no way to say "just select the whole document".
@@ -61,10 +73,11 @@ We thus don't have to do such a check or maintain logic for raising an error.
 * In MongoDB, an object in the selection does NOT match a scalar in the document.
 We do it differently (but only because it is easier)
 * The root level of the document in mongo is always an object (I think).
-But we we want to support root level lists too
+But `jsonb_select_keys` supports root level lists too.
 * Somewhat related:
 ** https://dba.stackexchange.com/questions/290005/how-to-select-sub-object-with-given-keys-from-jsonb
 ** https://dba.stackexchange.com/questions/265731/how-to-select-subset-json-with-postgresql
+** https://stackoverflow.com/questions/47341618/postgres-select-a-subset-of-fields-from-a-json-object
 
 == A bunch of small examples
 

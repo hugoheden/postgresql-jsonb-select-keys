@@ -46,7 +46,7 @@ function print_ascii_doc_cell_json() {
   # shellcheck disable=SC2016
   printf '\nConsider this example doc and selections. `jsonb_select_keys()` yields the following results:\n\n'
   printf '[%%header,cols="a,a,a"]\n|===\n'
-  printf '|Doc|Selection|Result\n\n'
+  printf '|A sample doc|Selection|Result\n\n'
   printf '.100+' ; print_ascii_doc_cell_json "$doc";
   # Gaahh, what a mess. We add a column containing a '#' character here. This is used as a line delimiter below in read
   # -d '#' instead of newline. (The jsonb_pretty outputs newlines, so we need to use another character as line

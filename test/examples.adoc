@@ -6,7 +6,7 @@ Consider this example doc and selections. `jsonb_select_keys()` yields the follo
 
 [%header,cols="a,a,a"]
 |===
-|Doc|Selection|Result
+|A sample doc|Selection|Result
 
 .100+|
 [source,json]
