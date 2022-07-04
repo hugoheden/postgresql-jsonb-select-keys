@@ -17,6 +17,7 @@ Usage example:
 select jsonb_select_keys(
  -- doc:
  '{
+    "id": 457,
     "a": "hello",
     "b": {
         "c": "there",
@@ -35,6 +36,7 @@ select jsonb_select_keys(
  }',
  -- selection:
  '{
+    "id": 1,
     "b": {
         "c": 1
     },
@@ -60,7 +62,8 @@ This would result in:
         {
             "g": "evening"
         }
-    ]
+    ],
+    "id": 457
 }
 ----
 
@@ -91,7 +94,8 @@ endif::[]
 The work horse in the function is the inner join: The properties of the selection json object ("extracted" using `json_each`) are joined with the doc json object ("extracted" using `json_each`).
 The join condition is field name ("key") of each property.
 So the result will contain only the properties in the doc that are also present in the selection.
-So, a much simplified variant of the function could be something like:
+
+To illustrate this, a _simplified_ variant of the function could be something like:
 
 [source,sql]
 ----

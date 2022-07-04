@@ -345,6 +345,7 @@ from (values ('{"a": "blabla", "b": {"c": "bleh", "d":  "bluh"}}', -- doc
               '')
             , (
                 '{
+                    "id": 457,
                     "a": "hello",
                     "b": {
                         "c": "there",
@@ -362,6 +363,7 @@ from (values ('{"a": "blabla", "b": {"c": "bleh", "d":  "bluh"}}', -- doc
                     ]
                 }'::jsonb,
                '{
+                 "id": 1,
                   "b": {
                       "c": 1
                   },
@@ -380,7 +382,8 @@ from (values ('{"a": "blabla", "b": {"c": "bleh", "d":  "bluh"}}', -- doc
                     {
                       "g": "evening"
                     }
-                  ]
+                  ],
+                  "id": 457
                 }'::jsonb,
                'to be used in README as initial example'
         )
