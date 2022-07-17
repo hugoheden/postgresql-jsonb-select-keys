@@ -1,7 +1,7 @@
 = jsonb_select_keys - a PostgreSQL function
 
 A postgresql function for selecting a subset of a fields in a json (`jsonb`) document.
-(Is "projection" a better term?)
+(Is "projection" a better term than "selection"?)
 
 Tested with postgres 9, 10, 11, 12, 13, 14.
 
@@ -91,7 +91,7 @@ endif::[]
 
 === Discussion
 
-The work horse in the function is the inner join: The properties of the selection json object ("extracted" using `json_each`) are joined with the doc json object ("extracted" using `json_each`).
+The work horse in the function is the inner join: The properties of the selection json object ("extracted" using `jsonb_each`) are joined with the doc json object (again, "extracted" using `jsonb_each`).
 The join condition is field name ("key") of each property.
 So the result will contain only the properties in the doc that are also present in the selection.
 
